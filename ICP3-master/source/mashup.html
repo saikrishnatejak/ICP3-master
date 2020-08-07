@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>calorie</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+</head>
+<body>
+
+
+<div ng-app="calorieApp" ng-controller="calorieCtrl"> 
+  <input type="text"  ng-model="foodName" placeholder="Enter foodName " id="foodName">
+      <button id="btn" ng-click="calorieDetailsFn()">
+          calorie Details
+      </button>
+      <button id="btn" ng-click="audioFn()">
+          Play audio
+      </button>      
+<h1>calorie Details are as follows</h1>
+  <table>
+    <th width="30%">Description</th>
+    <th width="30%">Value</th>
+    <tr ng-repeat="obj in calorieDetails">
+      <td>{{ obj.name }}</td>
+      <td>{{ obj.value }}</td>
+    </tr>
+  </table>  
+</div>
+</body>
+</html>
+
+
+<script>
+
+var app = angular.module('calorieApp', []);
+app.controller('calorieCtrl', function($scope, $http) {
+  $scope.calorieDetailsFn = function() {
+    var foodName = document.getElementById("foodName").value;
+    var query = "https://api.edamam.com/api/nutrition-data?app_id=6ac7a2f1&app_key=0f56610ff7a48582b4a6b01293f60bc0 &ingr=" + foodName;
+    
+    $http.get(query)
+    .then(function(response) {
+      console.log("response", response.data);
+      var calorieData = response.data
+      $scope.calorieDetails = [];
+      $scope.calorieDetails.push({name:"calories", value:calorieData.calories});
+      $scope.calorieDetails.push({name:"totalWeight", value:calorieData.totalWeight});          
+      return $scope.calorieDetails;        
+    });    
+
+  }
+  $scope.audioFn = function() {
+    var foodName = document.getElementById("foodName").value;
+    var htmlCode = '<audio controls="controls"><source src="http://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?username=94cc7289-ef27-4772-b480-5337879dccfc&password=oKwNlpPCLECY&text=' +foodName + '" type="audio/ogg"></audio>'
+    console.log(htmlCode)
+    document.write(htmlCode); 
+  }
+
+});
+
+</script>
